@@ -1,0 +1,44 @@
+{
+    "meta" : {
+        "projectName" : {"text" : null, "isEditing" : false},
+        "projectDeadline" : {"text" : null, "isEditing" : false},
+        "projectDescription" : {"text" : null, "isEditing" : false},
+        "projectIsComplete" : false,
+        "boardCount" : null
+    },
+    "boards" : [
+        {
+            "meta":{
+                "boardName" : null,
+                "cardCount" : null,
+                "background" : {
+                    "backgroundColor" : null,
+                    "isImage" : false,
+                    "backgroundImage" : null
+                },
+                "allTags" : [
+                    {"tagName" : null}
+                ]
+            },
+            "cards": [
+                {
+                    "cardName" : null,
+                    "cardDescription" : null,
+                    "cardIdeas" : null,
+                    "commentCount" : null,
+                    "comments" : [
+                        {
+                            "commentTitle" : null,
+                            "commentBody" :null
+                        }
+                    ],
+        
+                    "cardTags" : [
+                        {"tagName" : null}
+                    ]
+                }
+            ]
+        }
+    ]
+}
+

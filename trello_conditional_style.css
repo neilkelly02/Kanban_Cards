@@ -1,0 +1,150 @@
+/* Author: Neil Kelly */
+#app{
+    background-color: slategray;
+}
+
+/* header colors */
+
+.white #p-header{
+    background-color: whitesmoke;
+    padding: 1%;
+    text-align: left;
+}
+
+.red #p-header{
+    background-color: lightpink;
+    padding: 1%;
+    text-align: left;
+}
+
+.orange #p-header{
+    background-color: lightsalmon;
+    padding: 1%;
+    text-align: left;
+}
+
+.yellow #p-header{
+    background-color: lemonchiffon;
+    padding: 1%;
+    text-align: left;
+}
+
+.green #p-header{
+    background-color: lightgreen;
+    padding: 1%;
+    text-align: left;
+}
+
+.blue #p-header{
+    background-color: powderblue;
+    padding: 1%;
+    text-align: left;
+}
+
+.purple #p-header{
+    background-color: plum;
+    padding: 1%;
+    text-align: left;
+}
+
+
+
+/* column colors */
+
+.white .column{
+    width: 37%;
+    min-width: 30%;
+    margin: 5px;
+}
+
+.red .column{
+    width: 37%;
+    min-width: 30%;
+    margin: 5px;
+    background-color: lightpink;
+}
+
+.orange .column{
+    width: 37%;
+    min-width: 30%;
+    margin: 5px;
+    background-color: lightsalmon;
+}
+
+.yellow .column{
+    width: 37%;
+    min-width: 30%;
+    margin: 5px;
+    background-color: lemonchiffon;
+}
+
+.green .column{
+    width: 37%;
+    min-width: 30%;
+    margin: 5px;
+    background-color: lightgreen;
+}
+
+.blue .column{
+    width: 37%;
+    min-width: 30%;
+    margin: 5px;
+    background-color: powderblue;
+}
+
+.purple .column{
+    width: 37%;
+    min-width: 30%;
+    margin: 5px;
+    background-color: plum;
+}
+
+/* card colors */
+
+.white .card{
+    margin-top: 1%;
+    margin-bottom: 1%;
+}
+
+.red .card{
+    margin-top: 1%;
+    margin-bottom: 1%;
+    background-color: lightpink;
+}
+
+.orange .card{
+    margin-top: 1%;
+    margin-bottom: 1%;
+    background-color: lightsalmon;
+}
+
+.yellow .card{
+    margin-top: 1%;
+    margin-bottom: 1%;
+    background-color: lemonchiffon;
+}
+
+.green .card{
+    margin-top: 1%;
+    margin-bottom: 1%;
+    background-color: lightgreen;
+}
+
+.blue .card{
+    margin-top: 1%;
+    margin-bottom: 1%;
+    background-color: powderblue;
+}
+
+.purple .card{
+    margin-top: 1%;
+    margin-bottom: 1%;
+    background-color: plum;
+}
+
+#comment-text{
+    padding: 1%;
+    background-color: whitesmoke;
+    margin: 1%;
+    font-size: 90%;
+}

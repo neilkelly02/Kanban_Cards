@@ -1,0 +1,210 @@
+<!DOCTYPE HTML>
+<!-- Author: Neil Kelly -->
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <!-- always put your name in your work -->
+    <meta name="author" content="Neil Kelly">
+    <!-- always label your name with a title -->
+    <title>Trello Clone</title>
+    <!-- scale page to fit entire screen, so it properly fills non-desktop devices -->    
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- DEV-only for easier refreshing: stop the web browser from ever caching this page or its images -->
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <!-- bootstrap stuff -->
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css" />
+    
+    <!-- use latest version of Vue and then BootstrapVue-->
+    <script src="https://unpkg.com/vue@latest/dist/vue.js"></script>
+    <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
+
+    <!-- load the following for BootstrapVueIcons support -->
+    <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue-icons.js"></script>
+
+    <!-- style for this page -->
+    <link rel="stylesheet" href="trello_style.css">
+    <link rel = "stylesheet" href = "trello_conditional_style.css">
+
+    <!-- interaction for this page, defer loading until after page to allw access to DOM elements -->
+
+    <!-- EMPTY data structure -->
+    <script defer src = "sample_empty_project.js"></script>
+    
+    <!-- contains SAMPLE DATA, linked to trello by default -->
+    <script defer src = "sample_min_project.js"></script>
+    <script defer src = "trello.js"></script>
+    
+</head>
+<body>
+    <!-- div controlled by Vue -->
+    <div id="app">
+        <div :class = "colorSettings.header">
+            <div id = "p-header">
+                <div class = "container">
+                    <div class = "row">
+                        <div class = "col-6" id = "p-name">
+                            <input id = "p-name-input" type = "text" v-if = "boardData.meta.boardName.isEditing" v-model = "boardData.meta.boardName.text" @keyup.enter = "boardData.meta.boardName.isEditing = false">
+                            <label id = "p-name-label" v-else @dblclick = "boardData.meta.boardName.isEditing = true">{{boardData.meta.boardName.text}}</label>
+                        </div>
+    
+                        <div class = "col" id = "p-buttons">
+                            <b-button class = "header-btn" variant = "outline-dark" @click = "globalEdit.columnModalVisible = true">Add column</b-button>
+    
+                            <span v-if = "globalEdit.searchResVisible">
+                                <b-button class = "header-btn" variant = "outline-dark" @click = "clearSearch()">Return to Board</b-button>
+                            </span>
+                            <span v-else>
+                                <b-button class = "header-btn" variant = "outline-dark" @click = "globalEdit.sidebarVisible = true">Configure</b-button>
+                            </span>
+                        </div>
+                    </div>
+                    <span v-if = "boardData.columns.length > 1">{{boardData.columns.length}} columns, due on </span>
+                    <span v-else>{{boardData.columns.length}} column, due on </span>
+    
+                    <input id = "p-deadline-input" type = "text" v-if = "boardData.meta.boardDeadline.isEditing" v-model = "boardData.meta.boardDeadline.text" @keyup.enter = "boardData.meta.boardDeadline.isEditing = false">
+                    <label v-else @dblclick = "boardData.meta.boardDeadline.isEditing = true">{{boardData.meta.boardDeadline.text}}</label>
+    
+                    <br>
+    
+                    <input id = "p-description-input" type = "text" v-if = "boardData.meta.boardDescription.isEditing" v-model = "boardData.meta.boardDescription.text" @keyup.enter = "boardData.meta.boardDescription.isEditing = false">
+                    <label v-else @dblclick = "boardData.meta.boardDescription.isEditing = true">{{boardData.meta.boardDescription.text}}</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class = "container-fluid">
+            <div class = "row flex-nowrap" :class = "colorSettings.column">
+                <b-card class = "column" :class = "colorSettings.card" v-for = "(column, i) in boardData.columns" :key = "i"
+                    @drop="onDrop(column)"
+                    @dragover.prevent
+                    @dragenter.prevent
+                >  
+                    <!-- column wide info -->
+                    <div class = "header">
+                        <div class = "name">
+                            <input class = "name-input" type = "text" v-if = "column.meta.columnName.isEditing" v-model = "column.meta.columnName.text" @keyup.enter = "column.meta.columnName.isEditing = false">
+                            <label v-else class = "name-text" @dblclick = "column.meta.columnName.isEditing = true"><h2><b>{{column.meta.columnName.text}}</b></h2></label>
+                        </div>
+                        
+                        <!-- add new card to column -->
+                        <b-button class = "add-card-btn" variant = "outline-dark" @click = "globalEdit.inputCardColumn = column; globalEdit.modalVisible = true">
+                            Add Card
+                        </b-button>
+
+                        <!-- duplicate current column, adds it to the right most column -->
+                        <b-button class = "dup-column-btn" variant = "outline-dark" @click = "duplicateColumn(column)">
+                            Duplicate
+                        </b-button>
+
+                        <!-- delete current column -->
+                        <b-button class = "del-column-btn" variant = "outline-dark" @click = "removeColumn(column)">
+                            Delete
+                        </b-button>
+
+                        
+                        <br>
+                        <span class = "card-count">{{column.cards.length}} cards</span>
+                    </div>
+        
+                    <!-- individual cards -->
+                    <b-card class = "card" v-for = "(card, j) in column.cards" :key = "j"
+                        draggable
+                        @dragstart="startDrag(column, card)"
+                    >
+                        <div class = "c-name">
+                            <input id = "c-name-input" type = "text" v-if = "card.cardName.isEditing" v-model = "card.cardName.text" @keyup.enter = "card.cardName.isEditing = false">
+                            <label id = "c-name-label" v-else @dblclick = "card.cardName.isEditing = true"><h5><b>{{card.cardName.text}}</b></h5></label>
+                        </div>
+
+                        <b-button class = "card-btn" variant = "outline-dark" @click = "removeCard(column, card)">Delete</b-button>
+                        <b-button class = "card-btn" variant = "outline-dark" @click = "duplicateCard(column, card)">Duplicate</b-button>
+                        <br>
+
+                        <!-- display tags -->
+                        <span class = "tag-display" v-for = "(tag, k) in card.cardTags" :key = "k">{{tag.tagName}}</span>
+                        
+                        <div class = "body">
+                            <input id = "c-description-input" type = "text" v-if = "card.cardDescription.isEditing" v-model = "card.cardDescription.text" @keyup.enter = "card.cardDescription.isEditing = false">
+                            <label id = "c-description-label" v-else @dblclick = "card.cardDescription.isEditing = true">{{card.cardDescription.text}}</label>
+                            <br>
+                            <input id = "c-ideas-input" type = "text" v-if = "card.cardIdeas.isEditing" v-model = "card.cardIdeas.text" @keyup.enter = "card.cardIdeas.isEditing = false">
+                            <label id = "c-ideas-label" v-else @dblclick = "card.cardIdeas.isEditing = true"><i>{{card.cardIdeas.text}}</i></label>
+
+                            <br>
+                            <div class = "comments">
+                                {{card.comments.length}} comments:
+                                <input id = "comment-input" type = "text" placeholder = "New comment" v-model = "card.inputText" @keyup.enter = "addComment(card)">
+                                <div id = "comment-text" v-for = "(comment, m) in card.comments" :key = "m">
+                                    {{comment.commentBody}}
+                                </div>
+                            </div>
+                        </div>
+                    </b-card>
+                </b-card>
+            </div>
+        </div>
+
+        <!-- modal input to add new column -->
+        <b-modal title = "Create a New Column" v-model = "globalEdit.columnModalVisible" @ok = "createColumn()">
+            <div v-if = "globalEdit.columnModalVisible">
+                <span v-for = "(field, o) in globalEdit.inputColumn" :key = "o">
+                    <label for = "field.fieldName + '-Bmodal'">{{field.fieldName}}</label>
+                    <b-form-input trim id = "field.fieldName + '-Bmodal'" v-model = "field.fieldText"></b-form-input>
+                    <br>
+                </span>
+            </div>
+        </b-modal>
+
+        <!-- modal input to add new card-->
+        <b-modal title = "Create a New Card" v-model="globalEdit.modalVisible" @ok = "createCard()">
+            <div v-if = "globalEdit.modalVisible">
+                <span v-for = "(field, n) in globalEdit.inputCard" :key = "n">
+                    <label for = "field.fieldName +'-modal'">{{field.fieldName}}</label>
+                    <b-form-input trim id = "field.fieldName +'-modal'" v-model = "field.fieldText"></b-form-input>
+                    <br>
+                </span>
+            </div>
+        </b-modal>
+
+        <!-- sidebar input for searching and configuring color -->
+        <b-sidebar title = "Configure" v-model="globalEdit.sidebarVisible" shadow right backdrop>
+            <!-- was this displayed at the correct time (is there something to edit?) -->
+            <div v-if="globalEdit.sidebarVisible">
+                <div id = "search">
+                    <label for="search-sidebar">Search:</label>
+                    <b-form-input trim id="search-input" placeholder = "Enter search..." v-model="globalEdit.searchText"></b-form-input>
+                    <b-button id = "search-btn" variant = "outline-dark" @click = "search()">Search</b-button>
+                </div>
+
+                <div id = "color">
+                    <div id = "color-settings-label">Color Settings:</div>
+
+                    <b-dropdown id="header-color-dropdown" text="Header" class="m-md-2">
+                        <b-dropdown-item v-for = "(color, p) in colorSettings.options" :key = "p" @click = "setHeaderColor(p)">
+                            {{color.colorName}}
+                        </b-dropdown-item>
+                    </b-dropdown>
+
+                    <b-dropdown id="column-color-dropdown" text="Column" class="m-md-2">
+                        <b-dropdown-item v-for = "(color, p) in colorSettings.options" :key = "p" @click = "setColumnColor(p)">
+                            {{color.colorName}}
+                        </b-dropdown-item>
+                    </b-dropdown>
+
+                    <b-dropdown id="card-color-dropdown" text="Card" class="m-md-2">
+                        <b-dropdown-item v-for = "(color, p) in colorSettings.options" :key = "p" @click = "setCardColor(p)">
+                            {{color.colorName}}
+                        </b-dropdown-item>
+                    </b-dropdown>
+
+                  </div>
+            </div>
+        </b-sidebar>
+    </div>
+</body>
+</html>

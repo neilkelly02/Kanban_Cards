@@ -1,0 +1,95 @@
+/* Author: Neil Kelly */
+
+#app{
+    background-color: slategray;
+}
+
+/* header styling */
+
+#p-header{
+    background-color: whitesmoke;
+    padding: 1%;
+    text-align: left;
+}
+
+#p-name{
+    font-size: 390%;
+}
+
+#p-buttons{
+    text-align: center;
+}
+
+.header-btn{
+    margin: 5%;
+    font-size: 150%;
+}
+
+/* board body styling */
+
+.container-fluid{
+    overflow-x: scroll;
+    width: 100%;
+}
+.column{
+    width: 37%;
+    min-width: 30%;
+    margin: 5px;
+}
+
+.column .card{
+    margin-top: 1%;
+    margin-bottom: 1%;
+}
+
+.column .header .name .name-text{
+    font-size: x-large;
+}
+
+.column .header .name .name-input{
+    font-size: x-large;
+}
+
+.column .header .card-count{
+    font-size: large;
+}
+
+.card-btn{
+    font-size: 80%;
+    padding: 0%;
+    padding-left: 1%;
+    padding-right: 1%;
+}
+
+.tag-display{
+    outline: 1px solid slategray;
+    margin-right: 10px;
+    padding: 2px;
+}
+
+#comment-text{
+    padding: 1%;
+    background-color: whitesmoke;
+    margin: 1%;
+    font-size: 90%;
+}
+
+/* sidebar styling */
+
+#search{
+    padding: 10px;
+    font-size: large;
+}
+
+#search-input{
+    margin-bottom: 5px;
+}
+
+#search-sidebar{
+    margin: 5px;
+}
+
+#color-settings-label{
+    font-size: large;
+    margin: 10px;
+}
